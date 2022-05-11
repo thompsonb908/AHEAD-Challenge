@@ -53,8 +53,7 @@ def run(hash, api_key):
             print(f'File is malicious, flagged by {count} AV engines')
         # print(f'{harmless_votes} people voted this file as harmless')
         # print(f'{malicious_votes} people voted this file as malicious')
-    else:
-        print("There was an error processing the request.")
+    return 0
 
 
 # prints the HTTP response code and provides success/error messages
