@@ -3,6 +3,11 @@
 2. Outputs the HTTP response code and gives detail for errors.
 3. Reports the number of flagged AV engines. 
 
-# TODO:
-5. (Optional) generate hash from file
-6. (optional) get api-key from file
+# Usage
+* Install the required packages with pip
+
+    `pip install -r requirements.txt`
+
+* Run the program:
+    
+    `python3 VirusTotal.py <hash> <api_key>` 
