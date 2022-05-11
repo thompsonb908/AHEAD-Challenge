@@ -3,6 +3,7 @@ import sys
 import json
 import re
 
+# Global variables for testing hashes, API keys, and URLs
 SAFE_HASH_MD5 = 'd14651e4b014d2d098c24ef76c7309da'
 SAFE_HASH_SHA265 = '7539b2a70540ecd043b5a491aacd69060e5f1495fa28a6b3a09edc7888db6664'
 BAD_HASH_MD5 = '44d88612fea8a8f36de82e1278abb02f'
@@ -10,7 +11,7 @@ BAD_HASH_SHA265 = '275a021bbfb6489e54d471899f7db9d1663fc695ec2fe2a2c4538aabf651f
 TARGET = 'https://www.virustotal.com/api/v3/files'
 HEADERS = {'x-apikey': ''}
 
-
+# validates that the hash value is formatted propperly
 def check_hash(hash:str):
     md5_check = re.findall(r"([a-fA-F\d]{32})", hash)
     sha256_check = re.findall(r"([a-fA-F\d]{64})", hash)
@@ -23,6 +24,10 @@ def check_hash(hash:str):
         print("Hash is not valid.")
         exit(2)
 
+
+# sends a request to the url with the hash and API key
+# if the response code is correct, count the number of
+# malicious AV reports 
 def run(hash, api_key):
     headers = {'x-apikey': api_key}
     url = f"{TARGET}/{hash}"
@@ -31,7 +36,6 @@ def run(hash, api_key):
     response = requests.get(url, headers=headers)
 
     if http_response_code(response.status_code):
-
         response_json = json.loads(response.text)['data']
         harmless_votes = response_json['attributes']['total_votes']['harmless']
         malicious_votes = response_json['attributes']['total_votes']['malicious']
@@ -53,6 +57,7 @@ def run(hash, api_key):
         print("There was an error processing the request.")
 
 
+# prints the HTTP response code and provides success/error messages
 def http_response_code(status):
     print(f'Status code: {status}')
     if status == 200:
@@ -80,25 +85,11 @@ def http_response_code(status):
         print('Error: Operation took too long.')
         return False
 
-
-
-
+# main function, checks arguments, starts the program.
 if __name__ == '__main__':
-    # Argparse not working correctly, fallback to sys.argv
-    # parser = argparse.ArgumentParser(
-    #     description="Virus Total API Tool",
-    #     formatter_class=argparse.RawDescriptionHelpFormatter,
-    #     epilog=textwrap.dedent('''Example:
-    #     viruscheck.py -h <hash_value> -k <api_key>
-    #     ''')
-    # )
-    # parser.add_argument('-h', '--hash', type=str, help='file hash value')
-    # parser.add_argument('-k', '--key', type=str, help='API key')
-
-    # args = parser.parse_args()
     if len(sys.argv) != 3:
         print("Did not recieve correct number of arguments")
-        print("Example: python file.py <hash_value> <api_key>")
+        print("Example: python VirusTotal.py <hash_value> <api_key>")
     hash = sys.argv[1]
     check_hash(hash)
     api_key = sys.argv[2]
